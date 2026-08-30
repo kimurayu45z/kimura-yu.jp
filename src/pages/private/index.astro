@@ -1,0 +1,303 @@
+---
+import { ArrowUpRight, AtSign, KeyRound, LockKeyhole, LogOut, Mail, Phone } from '@lucide/astro';
+
+import BusinessCardCarousel from '@/components/BusinessCardCarousel.svelte';
+import ShareActions from '@/components/ShareActions.svelte';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { PRIVATE_SESSION_COOKIE, verifyPrivateSession } from '@/lib/server/auth';
+import { privateAuthConfiguration, privateContacts } from '@/lib/server/contacts';
+import * as m from '@/paraglide/messages';
+import { getLocale, type Locale } from '@/paraglide/runtime';
+import { site } from '@/site';
+
+const locale: Locale = getLocale();
+const auth = privateAuthConfiguration();
+const configured = Boolean(auth.password && auth.sessionSecret);
+const cookie = Astro.cookies.get(PRIVATE_SESSION_COOKIE)?.value;
+const authenticated = configured && verifyPrivateSession(cookie, auth.sessionSecret ?? '');
+const error = Astro.url.searchParams.get('error');
+const details = authenticated ? privateContacts() : undefined;
+const publicUrl = `${site.entryUrl}/${locale}`;
+const businessCards = [
+	{
+		id: 'cauchye',
+		label: m.organization_cauchye(),
+		organizations: [m.organization_cauchye()]
+	},
+	{
+		id: 'rising-fuku',
+		label: `${m.organization_rising_sun()} / FUKU`,
+		organizations: [
+			m.organization_rising_sun(),
+			m.organization_fuku_fund(),
+			m.organization_fuku_materials()
+		]
+	}
+];
+
+const shareLabels = {
+	add: m.action_add_contact(),
+	share: m.action_share(),
+	copy: m.action_copy_link(),
+	copied: m.action_copied()
+};
+---
+
+<BaseLayout {locale} mode="private" isAuthenticated={authenticated}>
+	{
+		authenticated ? (
+			<section class="private-page">
+				<BusinessCardCarousel
+					name={m.hero_name()}
+					latinName={m.hero_name_latin()}
+					cards={businessCards}
+					qrSrc={`/${locale}/qr.svg`}
+					qrAlt={m.contact_qr_alt()}
+					previousLabel={m.carousel_previous()}
+					nextLabel={m.carousel_next()}
+					client:load
+				/>
+
+				<section class="private-panel mt-7" aria-label={m.nav_contact()}>
+					<div class="private-list">
+						{details?.phoneJapan && (
+							<a href={`tel:${details.phoneJapan.replace(/\s/g, '')}`}>
+								<span class="private-icon">
+									<Phone />
+								</span>
+								<span>
+									<small>{m.contact_phone()} · JP</small>
+									<strong>{details.phoneJapan}</strong>
+								</span>
+								<ArrowUpRight />
+							</a>
+						)}
+						{details?.phoneSingapore && (
+							<a href={`tel:${details.phoneSingapore.replace(/\s/g, '')}`}>
+								<span class="private-icon">
+									<Phone />
+								</span>
+								<span>
+									<small>{m.contact_phone()} · SG</small>
+									<strong>{details.phoneSingapore}</strong>
+								</span>
+								<ArrowUpRight />
+							</a>
+						)}
+						{details?.personalEmail && (
+							<a href={`mailto:${details.personalEmail}`}>
+								<span class="private-icon">
+									<Mail />
+								</span>
+								<span>
+									<small>{m.contact_personal()}</small>
+									<strong>{details.personalEmail}</strong>
+								</span>
+								<ArrowUpRight />
+							</a>
+						)}
+						{details?.cauchyeEmail && (
+							<a href={`mailto:${details.cauchyeEmail}`}>
+								<span class="private-icon">
+									<Mail />
+								</span>
+								<span>
+									<small>{m.organization_cauchye()}</small>
+									<strong>{details.cauchyeEmail}</strong>
+								</span>
+								<ArrowUpRight />
+							</a>
+						)}
+						{details?.risingSunEmail && (
+							<a href={`mailto:${details.risingSunEmail}`}>
+								<span class="private-icon">
+									<Mail />
+								</span>
+								<span>
+									<small>{m.organization_rising_sun()}</small>
+									<strong>{details.risingSunEmail}</strong>
+								</span>
+								<ArrowUpRight />
+							</a>
+						)}
+						{details?.instagram && (
+							<a href={details.instagram.href} target="_blank" rel="noreferrer">
+								<span class="private-icon">
+									<AtSign />
+								</span>
+								<span>
+									<small>Instagram</small>
+									<strong>{details.instagram.value}</strong>
+								</span>
+								<ArrowUpRight />
+							</a>
+						)}
+					</div>
+				</section>
+
+				<div class="mt-5">
+					<ShareActions
+						url={publicUrl}
+						vcardUrl={`/${locale}/private/contact.vcf`}
+						title={m.private_meta_title()}
+						labels={shareLabels}
+						primaryLabel={m.private_full_contact()}
+						client:load
+					/>
+				</div>
+
+				<form method="post" action={`/${locale}/private/logout`} class="mt-4 text-center">
+					<Button type="submit" variant="ghost" size="sm">
+						<LogOut />
+						{m.private_logout()}
+					</Button>
+				</form>
+			</section>
+		) : (
+			<section class="login-page">
+				<div class="login-card">
+					<div class="mx-auto grid size-14 place-items-center rounded-full bg-primary text-primary-foreground">
+						<LockKeyhole class="size-6" />
+					</div>
+					<h1>{m.private_login_title()}</h1>
+
+					{!configured && (
+						<p role="alert" class="alert warning">
+							{m.private_unavailable()}
+						</p>
+					)}
+					{error === 'invalid' && (
+						<p role="alert" class="alert error">
+							{m.private_invalid()}
+						</p>
+					)}
+					{error === 'expired' && (
+						<p role="alert" class="alert warning">
+							{m.private_session_expired()}
+						</p>
+					)}
+
+					<form method="post" action={`/${locale}/private/session`} class="mt-6 grid gap-3">
+						<label for="access-password" class="sr-only">
+							{m.private_password_label()}
+						</label>
+						<Input
+							id="access-password"
+							name="password"
+							type="password"
+							autocomplete="current-password"
+							placeholder={m.private_password_placeholder()}
+							required
+							maxlength={256}
+							disabled={!configured}
+							class="h-12 rounded-full px-5"
+						/>
+						<Button type="submit" variant="brand" size="lg" class="w-full" disabled={!configured}>
+							<KeyRound />
+							{m.private_unlock()}
+						</Button>
+					</form>
+				</div>
+			</section>
+		)
+	}
+</BaseLayout>
+
+<style>
+	.private-page {
+		width: min(100% - 2rem, 38rem);
+		margin-inline: auto;
+		padding-block: 1.25rem 4rem;
+	}
+	.private-panel,
+	.login-card {
+		border: 1px solid var(--border);
+		border-radius: 1.5rem;
+		background: var(--card);
+		box-shadow: 0 0.8rem 2.5rem -2rem rgb(38 52 82 / 0.32);
+	}
+	.private-panel {
+		padding: 0.7rem;
+	}
+	.private-list {
+		display: grid;
+		gap: 0.25rem;
+	}
+	.private-list a {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr) auto;
+		align-items: center;
+		gap: 0.8rem;
+		border-radius: 1rem;
+		padding: 0.65rem;
+		transition: background-color 150ms ease;
+	}
+	.private-list a:hover {
+		background: var(--muted);
+	}
+	.private-list a > span:nth-child(2) {
+		display: grid;
+		min-width: 0;
+		gap: 0.15rem;
+	}
+	.private-list small {
+		font-size: 0.65rem;
+		font-weight: 650;
+		color: var(--muted-foreground);
+	}
+	.private-list strong {
+		overflow: hidden;
+		font-size: 0.85rem;
+		font-weight: 650;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.private-list :global(svg) {
+		width: 1rem;
+		height: 1rem;
+		color: var(--muted-foreground);
+	}
+	.private-icon {
+		display: grid;
+		width: 2.5rem;
+		height: 2.5rem;
+		place-items: center;
+		border-radius: 0.9rem;
+		background: color-mix(in srgb, var(--primary) 13%, white);
+	}
+	.private-icon :global(svg) {
+		color: color-mix(in srgb, var(--primary) 72%, #11203e);
+	}
+	.login-page {
+		display: grid;
+		min-height: calc(100svh - 8rem);
+		place-items: center;
+		padding: 1.5rem;
+	}
+	.login-card {
+		width: min(100%, 24rem);
+		padding: 2rem;
+		text-align: center;
+	}
+	.login-card h1 {
+		margin-top: 1rem;
+		font-size: 1.5rem;
+		font-weight: 720;
+	}
+	.alert {
+		margin-top: 1rem;
+		border-radius: 0.9rem;
+		padding: 0.75rem;
+		font-size: 0.75rem;
+	}
+	.alert.warning {
+		background: #fff5d9;
+		color: #674a0e;
+	}
+	.alert.error {
+		background: #fff0f0;
+		color: #8c2424;
+	}
+</style>

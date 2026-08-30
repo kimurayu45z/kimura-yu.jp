@@ -1,0 +1,18 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "kimura-yu-jp-apex-redirect",
+	"account_id": "452b69133ac984d69c91ed1a441a1124",
+	"main": "./workers/apex-redirect.ts",
+	"compatibility_date": "2026-08-30",
+	"workers_dev": false,
+	"routes": [
+		{
+			"pattern": "kimura-yu.jp",
+			"custom_domain": true
+		}
+	],
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1
+	}
+}

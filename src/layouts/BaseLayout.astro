@@ -1,0 +1,82 @@
+---
+import Header from '@/components/Header.svelte';
+import { localeMetadata, localizedPath } from '@/lib/locales';
+import * as m from '@/paraglide/messages';
+import type { Locale } from '@/paraglide/runtime';
+import { site } from '@/site';
+import '@/styles/global.css';
+
+interface Props {
+	locale: Locale;
+	mode?: 'public' | 'private';
+	isAuthenticated?: boolean;
+	title?: string;
+	description?: string;
+	pagePath?: string;
+}
+
+const {
+	locale,
+	mode = 'public',
+	isAuthenticated = false,
+	title = mode === 'private' ? m.private_meta_title() : m.meta_title(),
+	description = m.meta_description(),
+	pagePath = mode === 'private' ? '/private' : ''
+} = Astro.props;
+
+const canonicalUrl = `${site.url}${localizedPath(locale, pagePath)}`;
+const personSchema = JSON.stringify({
+	'@context': 'https://schema.org',
+	'@type': 'Person',
+	name: 'KIMURA Yu',
+	alternateName: ['木村 優', '木村优'],
+	url: site.url,
+	birthDate: site.birthDate,
+	alumniOf: [
+		{ '@type': 'CollegeOrUniversity', name: 'Kyoto University' },
+		{ '@type': 'EducationalOrganization', name: 'Kyoto University Graduate School of Management' }
+	],
+	affiliation: [{ '@type': 'Organization', name: 'CAUCHYE ASIA PTE. LTD.' }]
+}).replace(/</g, '\\u003c');
+
+const headerLabels = {
+	publicMode: m.nav_public_mode(),
+	privateMode: m.nav_private_mode(),
+	privateLocked: m.nav_private_locked(),
+	language: m.nav_language()
+};
+---
+
+<!doctype html>
+<html lang={localeMetadata[locale].htmlLang}>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
+		<meta name="theme-color" content="#1b292e" />
+		<title>{title}</title>
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="canonical" href={canonicalUrl} />
+		<link rel="alternate" hreflang="en" href={`${site.url}/en${pagePath}`} />
+		<link rel="alternate" hreflang="ja" href={`${site.url}/ja${pagePath}`} />
+		<link rel="alternate" hreflang="zh" href={`${site.url}/zh${pagePath}`} />
+		<link rel="alternate" hreflang="x-default" href={`${site.url}/en${pagePath}`} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="profile" />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:locale" content={localeMetadata[locale].ogLocale} />
+		{mode === 'public' && <script is:inline type="application/ld+json" set:html={personSchema} />}
+	</head>
+	<body>
+		<div class="flex min-h-svh flex-col">
+			<Header {locale} {mode} {isAuthenticated} labels={headerLabels} client:load />
+			<main class="flex-1">
+				<slot />
+			</main>
+			<footer class="py-6 text-center text-[0.68rem] font-medium text-muted-foreground">
+				© KIMURA Yu
+			</footer>
+		</div>
+	</body>
+</html>

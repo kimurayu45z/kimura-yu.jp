@@ -1,0 +1,11 @@
+pnpm-lock.yaml
+/dist/
+/.astro/
+/worker-configuration.d.ts
+/src/paraglide/
+/project.inlang/cache/
+/project.inlang/.meta.json
+/project.inlang/.gitignore
+/project.inlang/README.md
+/playwright-report/
+/test-results/

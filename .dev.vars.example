@@ -1,0 +1,21 @@
+# Copy this file to .dev.vars for local development. Never commit .dev.vars.
+# Set the two authentication values to independent, high-entropy secrets.
+PRIVATE_ACCESS_PASSWORD=
+PRIVATE_SESSION_SECRET=
+
+PERSONAL_WEBSITE_URL=
+PERSONAL_EMAIL=
+PHONE_JP=
+PHONE_SG=
+
+CAUCHYE_URL=
+CAUCHYE_EMAIL=
+RISING_SUN_EMAIL=
+TEPPAN_URL=
+
+SOCIAL_X_URL=
+SOCIAL_FACEBOOK_URL=
+SOCIAL_LINKEDIN_URL=
+SOCIAL_TELEGRAM_URL=
+SOCIAL_INSTAGRAM_URL=
+
