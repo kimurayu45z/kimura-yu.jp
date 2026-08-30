@@ -144,6 +144,11 @@ test('keeps the card inside a narrow mobile viewport', async ({ page }) => {
 	await expect(page.locator('img[src="/ja/qr.svg"]').first()).toBeVisible();
 	await expect(page.getByText(/登録解除 \(自己都合\)/)).toBeVisible();
 	await expect(page.getByText(/試験合格/)).toBeVisible();
+	const shareActionHeights = await page
+		.locator('.share-actions > [data-slot="button"]')
+		.evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().height));
+	expect(shareActionHeights).toHaveLength(3);
+	expect(new Set(shareActionHeights)).toEqual(new Set([48]));
 
 	const card = page.locator('[data-card-id="cauchye"]');
 	expect(

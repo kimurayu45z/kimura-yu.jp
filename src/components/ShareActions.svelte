@@ -32,8 +32,8 @@
 	}
 </script>
 
-<div class="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-2">
-	<Button href={vcardUrl} variant="brand" size="lg" class="w-full">
+<div class="share-actions grid grid-cols-[minmax(0,1fr)_auto_auto] gap-2">
+	<Button href={vcardUrl} variant="brand" size="lg" class="h-12 w-full">
 		<UserRoundPlus />
 		{primaryLabel ?? labels.add}
 	</Button>
