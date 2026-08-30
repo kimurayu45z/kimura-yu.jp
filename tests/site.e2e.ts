@@ -103,6 +103,9 @@ test('protects private HTML and vCard until the access code is verified', async 
 		page.locator('.private-list a[href="https://instagram.com/example"] strong')
 	).toHaveText('@example');
 	await expect(page.locator('img[src="/assets/logos/telegram.svg"]')).toBeVisible();
+	await expect(page.locator('.social-grid')).toBeVisible();
+	await expect(page.locator('.record-panel')).toHaveCount(2);
+	await expect(page.locator('img[src="/assets/logos/x.svg"]')).toBeVisible();
 
 	const sessionCookie = (await page.context().cookies()).find((cookie) =>
 		cookie.name.includes('kimura_private')
@@ -156,6 +159,10 @@ test('keeps the card inside a narrow mobile viewport', async ({ page }) => {
 		.evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect().height));
 	expect(shareActionHeights).toHaveLength(3);
 	expect(new Set(shareActionHeights)).toEqual(new Set([48]));
+	const socialColumns = await page
+		.locator('.social-grid')
+		.evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length);
+	expect(socialColumns).toBe(3);
 
 	const card = page.locator('[data-card-id="cauchye"]');
 	expect(
