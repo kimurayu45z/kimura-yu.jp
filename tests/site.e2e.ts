@@ -48,6 +48,7 @@ test('keeps restricted details out of public HTML, QR, and vCard', async ({ page
 		x: '#000000',
 		facebook: '#0866FF',
 		linkedin: '#0A66C2',
+		telegram: '#26A5E4',
 		note: '#040000'
 	};
 	for (const [logo, color] of Object.entries(brandColors)) {
@@ -57,7 +58,27 @@ test('keeps restricted details out of public HTML, QR, and vCard', async ({ page
 		expect(await asset.text()).toContain(`fill="${color}"`);
 	}
 	await expect(page.locator('img[src="/assets/logos/x.svg"]')).toBeVisible();
+	await expect(page.locator('img[src="/assets/logos/instagram.svg"]')).toBeVisible();
 	await expect(page.locator('img[src="/assets/logos/note.svg"]')).toBeVisible();
+	const instagramAsset = await page.request.get('/assets/logos/instagram.svg');
+	expect(instagramAsset.status()).toBe(200);
+	const instagramSvg = await instagramAsset.text();
+	expect(instagramSvg).toContain('#ff005f');
+	expect(instagramSvg).toContain('#780cff');
+	await expect(page.locator('.social-disabled')).toHaveCount(2);
+	await expect(page.locator('.social-disabled').filter({ hasText: 'Telegram' })).toBeVisible();
+	await expect(page.locator('.social-disabled').filter({ hasText: 'Instagram' })).toBeVisible();
+	expect(
+		await page
+			.locator('.social-disabled')
+			.first()
+			.evaluate((element) => getComputedStyle(element).borderStyle)
+	).toBe('dashed');
+	expect(
+		await page
+			.locator('.social-grid')
+			.evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length)
+	).toBe(5);
 	await expect(page.locator('.social-grid .note-social')).toContainText(
 		'The Interchain White Hat Hacker'
 	);
@@ -96,13 +117,15 @@ test('protects private HTML and vCard until the access code is verified', async 
 	await expect(page.getByText('work@example.test')).toBeVisible();
 	await expect(page.getByText('rising@example.test')).toBeVisible();
 	await expect(page.getByText('+81 80 0000 0001')).toBeVisible();
-	await expect(page.locator('.private-list a[href="https://t.me/example"] strong')).toHaveText(
-		'@example'
+	await expect(page.locator('.social-grid a[href="https://t.me/example"]')).toContainText(
+		'Telegram'
 	);
-	await expect(
-		page.locator('.private-list a[href="https://instagram.com/example"] strong')
-	).toHaveText('@example');
+	await expect(page.locator('.social-grid a[href="https://instagram.com/example"]')).toContainText(
+		'Instagram'
+	);
+	await expect(page.locator('.social-disabled')).toHaveCount(0);
 	await expect(page.locator('img[src="/assets/logos/telegram.svg"]')).toBeVisible();
+	await expect(page.locator('img[src="/assets/logos/instagram.svg"]')).toBeVisible();
 	await expect(page.locator('.social-grid')).toBeVisible();
 	await expect(page.locator('.record-panel')).toHaveCount(2);
 	await expect(page.locator('img[src="/assets/logos/x.svg"]')).toBeVisible();
@@ -124,13 +147,7 @@ test('protects private HTML and vCard until the access code is verified', async 
 	expect(fullCardText).toContain('TEL;TYPE=cell;VALUE=uri:tel:+818000000001');
 	expect(fullCardText).toContain('X-SOCIALPROFILE;TYPE=telegram:https://t.me/example');
 
-	await page.getByRole('button', { name: 'Sign out' }).click();
-	await expect(page.getByRole('heading', { name: 'Private mode' })).toBeVisible();
-	await expect(page.getByLabel('Access code')).toBeVisible();
-	await expect(page.getByText('private@example.test')).toHaveCount(0);
-	expect(
-		(await page.context().cookies()).find((cookie) => cookie.name.includes('kimura_private'))
-	).toBeUndefined();
+	await expect(page.getByRole('button', { name: 'Sign out' })).toHaveCount(0);
 });
 
 test('rejects cross-site private-session submissions', async ({ request }) => {
@@ -162,7 +179,7 @@ test('keeps the card inside a narrow mobile viewport', async ({ page }) => {
 	const socialColumns = await page
 		.locator('.social-grid')
 		.evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length);
-	expect(socialColumns).toBe(3);
+	expect(socialColumns).toBe(2);
 
 	const card = page.locator('[data-card-id="cauchye"]');
 	expect(

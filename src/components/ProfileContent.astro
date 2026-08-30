@@ -1,17 +1,8 @@
 ---
-import {
-	ArrowUpRight,
-	AtSign,
-	GraduationCap,
-	LogOut,
-	Mail,
-	Phone,
-	ShieldCheck
-} from '@lucide/astro';
+import { ArrowUpRight, GraduationCap, Mail, Phone, ShieldCheck } from '@lucide/astro';
 
 import BusinessCardCarousel from '@/components/BusinessCardCarousel.svelte';
 import ShareActions from '@/components/ShareActions.svelte';
-import { Button } from '@/components/ui/button';
 import type { PrivateContacts } from '@/lib/server/contacts';
 import { publicContacts } from '@/lib/server/contacts';
 import * as m from '@/paraglide/messages';
@@ -80,6 +71,19 @@ const socialLogos: Readonly<Record<string, string>> = {
 	Facebook: '/assets/logos/facebook.svg',
 	LinkedIn: '/assets/logos/linkedin.svg'
 };
+
+const restrictedSocials = [
+	{
+		label: 'Telegram',
+		logo: '/assets/logos/telegram.svg',
+		href: privateMode ? details?.telegram?.href : undefined
+	},
+	{
+		label: 'Instagram',
+		logo: '/assets/logos/instagram.svg',
+		href: privateMode ? details?.instagram?.href : undefined
+	}
+];
 ---
 
 <section class="card-page">
@@ -181,30 +185,6 @@ const socialLogos: Readonly<Record<string, string>> = {
 							<ArrowUpRight />
 						</a>
 					)}
-					{details.telegram && (
-						<a href={details.telegram.href} target="_blank" rel="noreferrer">
-							<span class="private-icon">
-								<img src="/assets/logos/telegram.svg" alt="" width="18" height="18" />
-							</span>
-							<span>
-								<small>Telegram</small>
-								<strong>{details.telegram.value}</strong>
-							</span>
-							<ArrowUpRight />
-						</a>
-					)}
-					{details.instagram && (
-						<a href={details.instagram.href} target="_blank" rel="noreferrer">
-							<span class="private-icon">
-								<AtSign />
-							</span>
-							<span>
-								<small>Instagram</small>
-								<strong>{details.instagram.value}</strong>
-							</span>
-							<ArrowUpRight />
-						</a>
-					)}
 				</div>
 			</section>
 		)
@@ -215,13 +195,28 @@ const socialLogos: Readonly<Record<string, string>> = {
 		<div class="social-grid">
 			{
 				contacts.socials.map((entry) => (
-					<a href={entry.href} target="_blank" rel="noreferrer">
+					<a class="social-link" href={entry.href} target="_blank" rel="noreferrer">
 						<img src={socialLogos[entry.label]} alt="" width="18" height="18" />
 						<span>{entry.label}</span>
 					</a>
 				))
 			}
-			<a class="note-social" href={site.noteUrl} target="_blank" rel="noreferrer">
+			{
+				restrictedSocials.map((entry) =>
+					entry.href ? (
+						<a class="social-link" href={entry.href} target="_blank" rel="noreferrer">
+							<img src={entry.logo} alt="" width="18" height="18" />
+							<span>{entry.label}</span>
+						</a>
+					) : (
+						<span class="social-link social-disabled" aria-disabled="true">
+							<img src={entry.logo} alt="" width="18" height="18" />
+							<span>{entry.label}</span>
+						</span>
+					)
+				)
+			}
+			<a class="social-link note-social" href={site.noteUrl} target="_blank" rel="noreferrer">
 				<img src="/assets/logos/note.svg" alt="" width="18" height="18" />
 				<span>
 					<small>note</small>
@@ -266,17 +261,6 @@ const socialLogos: Readonly<Record<string, string>> = {
 			}
 		</ol>
 	</section>
-
-	{
-		privateMode && (
-			<form method="post" action={`/${locale}/private/logout`} class="mt-4 text-center">
-				<Button type="submit" variant="ghost" size="sm">
-					<LogOut />
-					{m.private_logout()}
-				</Button>
-			</form>
-		)
-	}
 </section>
 
 <style>
@@ -326,10 +310,10 @@ const socialLogos: Readonly<Record<string, string>> = {
 	}
 	.social-grid {
 		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 0.5rem;
 	}
-	.social-grid a {
+	.social-link {
 		display: flex;
 		align-items: center;
 		gap: 0.55rem;
@@ -339,6 +323,12 @@ const socialLogos: Readonly<Record<string, string>> = {
 		font-size: 0.78rem;
 		font-weight: 650;
 		transition: background-color 150ms ease;
+	}
+	.social-disabled {
+		cursor: not-allowed;
+		border-style: dashed;
+		opacity: 0.5;
+		user-select: none;
 	}
 	.social-grid .note-social {
 		display: grid;
@@ -468,6 +458,9 @@ const socialLogos: Readonly<Record<string, string>> = {
 		}
 		.app-panel {
 			padding: 1.4rem;
+		}
+		.social-grid {
+			grid-template-columns: repeat(5, minmax(0, 1fr));
 		}
 	}
 </style>
