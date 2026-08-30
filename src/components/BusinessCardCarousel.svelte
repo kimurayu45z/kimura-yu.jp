@@ -9,6 +9,12 @@
 		id: string;
 		label: string;
 		organizations: string[];
+		website?:
+			| {
+					label: string;
+					href: string;
+			  }
+			| undefined;
 	}
 
 	interface Props {
@@ -41,13 +47,14 @@
 	opts={{ align: 'start', loop: false }}
 	setApi={(carouselApi) => (api = carouselApi)}
 >
-	<Carousel.Content class="-ms-0">
+	<Carousel.Content>
 		{#each cards as card, index (card.id)}
-			<Carousel.Item class="ps-0">
+			<Carousel.Item>
 				<BusinessCard
 					{name}
 					{latinName}
 					organizations={card.organizations}
+					website={card.website}
 					{qrSrc}
 					{qrAlt}
 					primary={index === 0}

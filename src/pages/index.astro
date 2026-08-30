@@ -1,5 +1,5 @@
 ---
-import { ArrowUpRight, Building2, GraduationCap, ShieldCheck } from '@lucide/astro';
+import { ArrowUpRight, GraduationCap, ShieldCheck } from '@lucide/astro';
 
 import BusinessCardCarousel from '@/components/BusinessCardCarousel.svelte';
 import ShareActions from '@/components/ShareActions.svelte';
@@ -32,18 +32,12 @@ const credentials = [
 	{ date: m.credential_2022_10_date(), body: m.credential_2022_10_body() }
 ];
 
-const organizations = [
-	{ name: m.organization_cauchye(), href: contacts.cauchyeUrl },
-	{ name: m.organization_rising_sun(), href: contacts.teppanUrl },
-	{ name: m.organization_fuku_fund(), href: contacts.teppanUrl },
-	{ name: m.organization_fuku_materials(), href: contacts.teppanUrl }
-];
-
 const businessCards = [
 	{
 		id: 'cauchye',
 		label: m.organization_cauchye(),
-		organizations: [m.organization_cauchye()]
+		organizations: [m.organization_cauchye()],
+		website: contacts.cauchyeUrl ? { label: 'cauchye.com', href: contacts.cauchyeUrl } : undefined
 	},
 	{
 		id: 'rising-fuku',
@@ -52,7 +46,10 @@ const businessCards = [
 			m.organization_rising_sun(),
 			m.organization_fuku_fund(),
 			m.organization_fuku_materials()
-		]
+		],
+		website: contacts.teppanUrl
+			? { label: 'teppan.ownerbook.io', href: contacts.teppanUrl }
+			: undefined
 	}
 ];
 
@@ -113,23 +110,6 @@ const socialLogos: Readonly<Record<string, string>> = {
 					</span>
 					<ArrowUpRight />
 				</a>
-			</div>
-		</section>
-
-		<section class="app-panel mt-4" aria-labelledby="organizations-heading">
-			<h2 id="organizations-heading">{m.organizations_title()}</h2>
-			<div class="link-list">
-				{
-					organizations.map((organization) => (
-						<a class="link-row" href={organization.href}>
-							<span class="row-icon">
-								<Building2 />
-							</span>
-							<strong>{organization.name}</strong>
-							<ArrowUpRight class="row-arrow" />
-						</a>
-					))
-				}
 			</div>
 		</section>
 
@@ -194,24 +174,6 @@ const socialLogos: Readonly<Record<string, string>> = {
 		color: var(--muted-foreground);
 		text-transform: uppercase;
 	}
-	.link-list {
-		display: grid;
-		gap: 0.35rem;
-	}
-	.link-row {
-		display: grid;
-		grid-template-columns: auto minmax(0, 1fr) auto;
-		align-items: center;
-		gap: 0.8rem;
-		min-width: 0;
-		border-radius: 0.75rem;
-		padding: 0.65rem;
-		transition: background-color 150ms ease;
-	}
-	.link-row:hover {
-		background: var(--muted);
-	}
-	.link-row strong,
 	.note-social strong {
 		overflow: hidden;
 		font-size: 0.85rem;
@@ -228,13 +190,9 @@ const socialLogos: Readonly<Record<string, string>> = {
 		color: color-mix(in srgb, var(--primary) 72%, #11203e);
 	}
 	.row-icon :global(svg),
-	.row-icon img,
-	.row-arrow {
+	.row-icon img {
 		width: 1rem;
 		height: 1rem;
-	}
-	.row-arrow {
-		color: var(--muted-foreground);
 	}
 	.social-grid {
 		display: grid;
@@ -274,7 +232,7 @@ const socialLogos: Readonly<Record<string, string>> = {
 		color: var(--muted-foreground);
 	}
 	.social-grid a:hover {
-		background: var(--accent);
+		background: var(--muted);
 	}
 	.social-grid img {
 		width: 0.95rem;

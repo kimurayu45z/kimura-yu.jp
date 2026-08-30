@@ -145,8 +145,7 @@ test('keeps the card inside a narrow mobile viewport', async ({ page }) => {
 	await expect(page.getByText(/登録解除 \(自己都合\)/)).toBeVisible();
 	await expect(page.getByText(/試験合格/)).toBeVisible();
 
-	const card = page.locator('.card-stack').first();
-	await expect(card).toHaveAttribute('style', /--rotate-x: 0deg; --rotate-y: 0deg/);
+	const card = page.locator('[data-card-id="cauchye"]');
 	expect(
 		await page
 			.locator('.business-card-face')
@@ -155,29 +154,42 @@ test('keeps the card inside a narrow mobile viewport', async ({ page }) => {
 				return Number.parseFloat(getComputedStyle(element).borderRadius);
 			})
 	).toBeGreaterThanOrEqual(20);
-	await expect(page.locator('.card-edge')).toHaveCount(4);
-	const box = await card.boundingBox();
-	expect(box).not.toBeNull();
-	const before = await card.evaluate((element) => getComputedStyle(element).transform);
-	await page.mouse.move(box!.x + box!.width / 2, box!.y + box!.height / 2);
-	await page.mouse.down();
-	await page.mouse.move(box!.x + box!.width * 0.8, box!.y + box!.height * 0.35);
-	await page.mouse.up();
-	await page.waitForTimeout(250);
-	const after = await card.evaluate((element) => getComputedStyle(element).transform);
-	expect(after).not.toBe(before);
+	await expect(page.locator('.card-edge')).toHaveCount(0);
+	expect(await card.evaluate((element) => getComputedStyle(element).transform)).toBe('none');
+	const columnHeights = await card.evaluate((element) => {
+		const identity = element.querySelector<HTMLElement>('.identity');
+		const qr = element.querySelector<HTMLElement>('.qr-wrap');
+		return {
+			identity: identity?.getBoundingClientRect().height ?? 0,
+			qr: qr?.getBoundingClientRect().height ?? 0
+		};
+	});
+	expect(Math.abs(columnHeights.identity - columnHeights.qr)).toBeLessThanOrEqual(1);
+	expect(
+		await page
+			.locator('[data-embla-slide]')
+			.first()
+			.evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingInlineStart))
+	).toBeGreaterThanOrEqual(16);
+	await expect(page.locator('#organizations-heading')).toHaveCount(0);
+	await expect(card.getByRole('link', { name: 'cauchye.com' })).toHaveAttribute(
+		'href',
+		'https://cauchye.example'
+	);
+	const firstSocial = page.locator('.social-grid a').first();
+	await firstSocial.hover();
+	expect(
+		await firstSocial.evaluate((element) => getComputedStyle(element).backgroundColor)
+	).not.toBe('rgb(237, 188, 100)');
 	await expect(page.getByText('1 / 2')).toBeVisible();
 	await page.getByRole('button', { name: '次の名刺' }).click();
 	await expect(page.getByText('2 / 2')).toBeVisible();
 	await expect(page.locator('[data-card-id="rising-fuku"]')).toBeVisible();
-	await expect(page.getByRole('link', { name: 'RISING SUN VISION PTE. LTD.' })).toHaveAttribute(
-		'href',
-		'https://teppan.example'
-	);
-	await expect(page.getByRole('link', { name: 'FUKU STEEL PLATE FUND L.P.' })).toHaveAttribute(
-		'href',
-		'https://teppan.example'
-	);
+	await expect(
+		page.locator('[data-card-id="rising-fuku"]').getByRole('link', {
+			name: 'teppan.ownerbook.io'
+		})
+	).toHaveAttribute('href', 'https://teppan.example');
 
 	await page.getByRole('button', { name: '言語' }).click();
 	await expect(page.getByRole('menuitem', { name: '中文' })).toHaveAttribute('href', '/zh');

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { PRIVATE_SESSION_COOKIE, verifyPrivateSession } from '@/lib/server/auth';
-import { privateAuthConfiguration, privateContacts } from '@/lib/server/contacts';
+import { privateAuthConfiguration, privateContacts, publicContacts } from '@/lib/server/contacts';
 import * as m from '@/paraglide/messages';
 import { getLocale, type Locale } from '@/paraglide/runtime';
 import { site } from '@/site';
@@ -19,12 +19,16 @@ const cookie = Astro.cookies.get(PRIVATE_SESSION_COOKIE)?.value;
 const authenticated = configured && verifyPrivateSession(cookie, auth.sessionSecret ?? '');
 const error = Astro.url.searchParams.get('error');
 const details = authenticated ? privateContacts() : undefined;
+const publicDetails = publicContacts();
 const publicUrl = `${site.entryUrl}/${locale}`;
 const businessCards = [
 	{
 		id: 'cauchye',
 		label: m.organization_cauchye(),
-		organizations: [m.organization_cauchye()]
+		organizations: [m.organization_cauchye()],
+		website: publicDetails.cauchyeUrl
+			? { label: 'cauchye.com', href: publicDetails.cauchyeUrl }
+			: undefined
 	},
 	{
 		id: 'rising-fuku',
@@ -33,7 +37,10 @@ const businessCards = [
 			m.organization_rising_sun(),
 			m.organization_fuku_fund(),
 			m.organization_fuku_materials()
-		]
+		],
+		website: publicDetails.teppanUrl
+			? { label: 'teppan.ownerbook.io', href: publicDetails.teppanUrl }
+			: undefined
 	}
 ];
 
