@@ -41,13 +41,13 @@ test('keeps restricted details out of public HTML, QR, and vCard', async ({ page
 	expect(html).not.toContain('rising@example.test');
 	expect(html).not.toContain('+81 80 0000 0001');
 	expect(html).not.toContain('instagram.com/example');
+	expect(html).not.toContain('t.me/example');
 	expect(html).not.toMatch(/[\uFF08\uFF09]/);
 
 	const brandColors = {
 		x: '#000000',
 		facebook: '#0866FF',
 		linkedin: '#0A66C2',
-		telegram: '#26A5E4',
 		note: '#040000'
 	};
 	for (const [logo, color] of Object.entries(brandColors)) {
@@ -96,7 +96,13 @@ test('protects private HTML and vCard until the access code is verified', async 
 	await expect(page.getByText('work@example.test')).toBeVisible();
 	await expect(page.getByText('rising@example.test')).toBeVisible();
 	await expect(page.getByText('+81 80 0000 0001')).toBeVisible();
-	await expect(page.getByText('@example').last()).toBeVisible();
+	await expect(page.locator('.private-list a[href="https://t.me/example"] strong')).toHaveText(
+		'@example'
+	);
+	await expect(
+		page.locator('.private-list a[href="https://instagram.com/example"] strong')
+	).toHaveText('@example');
+	await expect(page.locator('img[src="/assets/logos/telegram.svg"]')).toBeVisible();
 
 	const sessionCookie = (await page.context().cookies()).find((cookie) =>
 		cookie.name.includes('kimura_private')
@@ -113,6 +119,7 @@ test('protects private HTML and vCard until the access code is verified', async 
 	expect(fullCardText).toContain('EMAIL;TYPE=work:work@example.test');
 	expect(fullCardText).toContain('EMAIL;TYPE=work:rising@example.test');
 	expect(fullCardText).toContain('TEL;TYPE=cell;VALUE=uri:tel:+818000000001');
+	expect(fullCardText).toContain('X-SOCIALPROFILE;TYPE=telegram:https://t.me/example');
 
 	await page.getByRole('button', { name: 'Sign out' }).click();
 	await expect(page.getByRole('heading', { name: 'Private mode' })).toBeVisible();

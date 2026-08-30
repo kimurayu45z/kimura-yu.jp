@@ -58,6 +58,9 @@ export function createVCard(
 	if (privateData?.instagram) {
 		lines.push(`X-SOCIALPROFILE;TYPE=instagram:${privateData.instagram.href}`);
 	}
+	if (privateData?.telegram) {
+		lines.push(`X-SOCIALPROFILE;TYPE=telegram:${privateData.telegram.href}`);
+	}
 
 	lines.push(`SOURCE:${site.entryUrl}/${locale}`, 'END:VCARD');
 	return `${lines.join('\r\n')}\r\n`;

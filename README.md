@@ -28,7 +28,7 @@ pnpm exec wrangler secret put PRIVATE_SESSION_SECRET
 
 本番公開時は、Cloudflare側でも `*/private/session` の失敗試行を対象にRate Limiting Ruleを設定してください。アプリ側は入力サイズを制限し、パスワードを定数時間で照合しますが、分散ブルートフォース対策はエッジ側のルールで補完します。
 
-電話番号、すべてのメールアドレス、Instagramは公開HTML、公開vCard、公開QRに含まれません。公開QRは常に公開プロフィールURLだけをエンコードします。
+電話番号、すべてのメールアドレス、Telegram、Instagramは公開HTML、公開vCard、公開QRに含まれません。公開QRは常に公開プロフィールURLだけをエンコードします。
 
 ## 本番ドメイン
 

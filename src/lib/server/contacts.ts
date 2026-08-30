@@ -18,6 +18,7 @@ export interface PrivateContacts {
 	risingSunEmail: string | undefined;
 	phoneJapan: string | undefined;
 	phoneSingapore: string | undefined;
+	telegram: ContactLink | undefined;
 	instagram: ContactLink | undefined;
 }
 
@@ -37,8 +38,7 @@ export function publicContacts(): PublicContacts {
 	const socials: Array<ContactLink | undefined> = [
 		social('X', env.SOCIAL_X_URL),
 		social('Facebook', env.SOCIAL_FACEBOOK_URL),
-		social('LinkedIn', env.SOCIAL_LINKEDIN_URL),
-		social('Telegram', env.SOCIAL_TELEGRAM_URL)
+		social('LinkedIn', env.SOCIAL_LINKEDIN_URL)
 	];
 
 	return {
@@ -55,6 +55,7 @@ export function privateContacts(): PrivateContacts {
 		risingSunEmail: optionalValue(env.RISING_SUN_EMAIL),
 		phoneJapan: optionalValue(env.PHONE_JP),
 		phoneSingapore: optionalValue(env.PHONE_SG),
+		telegram: social('Telegram', env.SOCIAL_TELEGRAM_URL),
 		instagram: social('Instagram', env.SOCIAL_INSTAGRAM_URL)
 	};
 }
