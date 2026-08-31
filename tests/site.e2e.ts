@@ -29,6 +29,8 @@ for (const { locale, htmlLang, heading } of [
 		const qrImages = page.locator(`img[src="/${locale}/qr.svg"]`);
 		await expect(qrImages).toHaveCount(2);
 		await expect(qrImages.first()).toBeVisible();
+		await expect(page.getByText('CEO / CTO', { exact: true })).toHaveCount(2);
+		await expect(page.getByText('GP', { exact: true })).toHaveCount(2);
 	});
 }
 

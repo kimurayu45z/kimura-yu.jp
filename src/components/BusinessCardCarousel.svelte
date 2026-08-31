@@ -5,10 +5,15 @@
 
 	import BusinessCard from './BusinessCard.svelte';
 
+	interface Organization {
+		name: string;
+		roles: string[];
+	}
+
 	interface BusinessCardItem {
 		id: string;
 		label: string;
-		organizations: string[];
+		organizations: Organization[];
 		website?:
 			| {
 					label: string;

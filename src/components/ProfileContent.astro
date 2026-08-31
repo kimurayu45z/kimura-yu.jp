@@ -42,16 +42,16 @@ const businessCards = [
 	{
 		id: 'cauchye',
 		label: m.organization_cauchye(),
-		organizations: [m.organization_cauchye()],
+		organizations: [{ name: m.organization_cauchye(), roles: ['CEO', 'CTO'] }],
 		website: contacts.cauchyeUrl ? { label: 'cauchye.com', href: contacts.cauchyeUrl } : undefined
 	},
 	{
 		id: 'rising-fuku',
 		label: `${m.organization_rising_sun()} / FUKU`,
 		organizations: [
-			m.organization_rising_sun(),
-			m.organization_fuku_fund(),
-			m.organization_fuku_materials()
+			{ name: m.organization_rising_sun(), roles: ['CEO', 'CTO'] },
+			{ name: m.organization_fuku_fund(), roles: ['GP'] },
+			{ name: m.organization_fuku_materials(), roles: ['GP'] }
 		],
 		website: contacts.teppanUrl
 			? { label: 'teppan.ownerbook.io', href: contacts.teppanUrl }

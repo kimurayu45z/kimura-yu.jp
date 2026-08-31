@@ -8,10 +8,15 @@
 		href: string;
 	}
 
+	interface Organization {
+		name: string;
+		roles: string[];
+	}
+
 	interface Props {
 		name: string;
 		latinName: string;
-		organizations: string[];
+		organizations: Organization[];
 		website?: WebsiteLink | undefined;
 		qrSrc: string;
 		qrAlt: string;
@@ -35,7 +40,7 @@
 	class="business-card-face rounded-[1.45rem] py-0 shadow-none ring-0"
 	data-card-id={cardId}
 	role="group"
-	aria-label={`${name} — ${organizations.join(', ')}`}
+	aria-label={`${name} — ${organizations.map((organization) => `${organization.name}, ${organization.roles.join(' / ')}`).join('; ')}`}
 >
 	<Card.Content class="business-card-content p-0">
 		<div class="identity">
@@ -46,8 +51,11 @@
 			{/if}
 			<p class="latin-name">{latinName}</p>
 			<ul>
-				{#each organizations as organization (organization)}
-					<li>{organization}</li>
+				{#each organizations as organization (organization.name)}
+					<li>
+						<span>{organization.name}</span>
+						<strong>{organization.roles.join(' / ')}</strong>
+					</li>
 				{/each}
 			</ul>
 			{#if website}
@@ -115,13 +123,27 @@
 		margin-top: clamp(0.5rem, 1.7vw, 0.8rem);
 	}
 	li {
-		overflow: hidden;
+		display: flex;
+		min-width: 0;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.45rem;
 		font-size: clamp(0.54rem, 1.5vw, 0.66rem);
 		font-weight: 600;
 		line-height: 1.2;
 		color: #525d72;
+	}
+	li span {
+		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+	li strong {
+		flex: none;
+		font-size: 0.92em;
+		font-weight: 750;
+		letter-spacing: 0.04em;
+		color: #29364f;
 	}
 	.card-website {
 		display: inline-flex;
