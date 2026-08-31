@@ -194,15 +194,24 @@ test('keeps the card inside a narrow mobile viewport', async ({ page }) => {
 	).toBeGreaterThanOrEqual(20);
 	await expect(page.locator('.card-edge')).toHaveCount(0);
 	expect(await card.evaluate((element) => getComputedStyle(element).transform)).toBe('none');
-	const columnHeights = await card.evaluate((element) => {
-		const identity = element.querySelector<HTMLElement>('.identity');
+	const cardLayout = await card.evaluate((element) => {
+		const cardRect = element.getBoundingClientRect();
+		const nameBlock = element.querySelector<HTMLElement>('.name-block');
+		const details = element.querySelector<HTMLElement>('.business-details');
 		const qr = element.querySelector<HTMLElement>('.qr-wrap');
 		return {
-			identity: identity?.getBoundingClientRect().height ?? 0,
-			qr: qr?.getBoundingClientRect().height ?? 0
+			nameTopInset: (nameBlock?.getBoundingClientRect().top ?? 0) - cardRect.top,
+			detailsBottomInset: cardRect.bottom - (details?.getBoundingClientRect().bottom ?? 0),
+			qrCenterOffset: Math.abs(
+				(qr?.getBoundingClientRect().top ?? 0) +
+					(qr?.getBoundingClientRect().height ?? 0) / 2 -
+					(cardRect.top + cardRect.height / 2)
+			)
 		};
 	});
-	expect(Math.abs(columnHeights.identity - columnHeights.qr)).toBeLessThanOrEqual(1);
+	expect(cardLayout.nameTopInset).toBeLessThanOrEqual(24);
+	expect(cardLayout.detailsBottomInset).toBeLessThanOrEqual(24);
+	expect(cardLayout.qrCenterOffset).toBeLessThanOrEqual(1);
 	expect(
 		await page
 			.locator('[data-embla-slide]')

@@ -44,26 +44,31 @@
 >
 	<Card.Content class="business-card-content p-0">
 		<div class="identity">
-			{#if primary}
-				<h1>{name}</h1>
-			{:else}
-				<p class="display-name">{name}</p>
-			{/if}
-			<p class="latin-name">{latinName}</p>
-			<ul>
-				{#each organizations as organization (organization.name)}
-					<li>
-						<span>{organization.name}</span>
-						<strong>{organization.roles.join(' / ')}</strong>
-					</li>
-				{/each}
-			</ul>
-			{#if website}
-				<a class="card-website" href={website.href} target="_blank" rel="noreferrer">
-					<span>{website.label}</span>
-					<ArrowUpRight />
-				</a>
-			{/if}
+			<div class="name-block">
+				{#if primary}
+					<h1>{name}</h1>
+				{:else}
+					<p class="display-name">{name}</p>
+				{/if}
+				<p class="latin-name">{latinName}</p>
+			</div>
+
+			<div class="business-details">
+				<ul>
+					{#each organizations as organization (organization.name)}
+						<li>
+							<span>{organization.name}</span>
+							<strong>{organization.roles.join(' / ')}</strong>
+						</li>
+					{/each}
+				</ul>
+				{#if website}
+					<a class="card-website" href={website.href} target="_blank" rel="noreferrer">
+						<span>{website.label}</span>
+						<ArrowUpRight />
+					</a>
+				{/if}
+			</div>
 		</div>
 
 		<div class="qr-wrap">
@@ -83,25 +88,24 @@
 		box-shadow: 0 0.8rem 2.2rem -1.7rem rgb(28 39 62 / 0.28);
 	}
 	:global(.business-card-content) {
-		--column-height: clamp(7.2rem, 25vw, 8.3rem);
+		--qr-size: clamp(7.2rem, 25vw, 8.3rem);
 
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto;
-		align-items: center;
+		align-items: stretch;
 		gap: clamp(0.75rem, 3.5vw, 1.75rem);
 		height: 100%;
 		padding: clamp(1.15rem, 4vw, 2rem);
-	}
-	.identity,
-	.qr-wrap {
-		box-sizing: border-box;
-		height: var(--column-height);
 	}
 	.identity {
 		display: flex;
 		min-width: 0;
 		flex-direction: column;
-		justify-content: center;
+		justify-content: space-between;
+	}
+	.name-block,
+	.business-details {
+		min-width: 0;
 	}
 	h1,
 	.display-name {
@@ -120,7 +124,6 @@
 	ul {
 		display: grid;
 		gap: 0.15rem;
-		margin-top: clamp(0.5rem, 1.7vw, 0.8rem);
 	}
 	li {
 		display: flex;
@@ -167,7 +170,10 @@
 		flex: none;
 	}
 	.qr-wrap {
-		width: var(--column-height);
+		align-self: center;
+		box-sizing: border-box;
+		width: var(--qr-size);
+		height: var(--qr-size);
 		border-radius: 0.45rem;
 		background: #fff;
 		padding: clamp(0.15rem, 0.7vw, 0.3rem);
