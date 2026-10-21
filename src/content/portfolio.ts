@@ -18,7 +18,7 @@ const portfolios: Record<Locale, Portfolio> = {
 		cases: [
 			{
 				id: 'fuku-steel-plate-fund',
-				title: 'FUKU',
+				title: 'FUKU STEEL PLATE FUND',
 				summary:
 					'シンガポールの敷鉄板リースファンド。スキーム設計・投資家対応・システム開発を担当。',
 				href: 'https://teppan.ownerbook.io'
@@ -42,7 +42,7 @@ const portfolios: Record<Locale, Portfolio> = {
 		cases: [
 			{
 				id: 'fuku-steel-plate-fund',
-				title: 'FUKU',
+				title: 'FUKU STEEL PLATE FUND',
 				summary:
 					'A steel-plate leasing fund in Singapore. I handle structure design, investor communication and systems development.',
 				href: 'https://teppan.ownerbook.io'
@@ -67,7 +67,7 @@ const portfolios: Record<Locale, Portfolio> = {
 		cases: [
 			{
 				id: 'fuku-steel-plate-fund',
-				title: 'FUKU',
+				title: 'FUKU STEEL PLATE FUND',
 				summary: '新加坡建筑钢板租赁基金。负责结构设计、投资者沟通和系统开发。',
 				href: 'https://teppan.ownerbook.io'
 			},

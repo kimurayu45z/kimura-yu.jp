@@ -10,10 +10,9 @@ for (const locale of ['ja', 'en', 'zh']) {
 		await expect(portfolio).toHaveClass(/record-panel/);
 		await expect(portfolio.locator('header .row-icon svg')).toBeVisible();
 		await expect(portfolio.locator('article')).toHaveCount(3);
-		await expect(portfolio.getByRole('link', { name: 'FUKU', exact: true })).toHaveAttribute(
-			'href',
-			'https://teppan.ownerbook.io'
-		);
+		await expect(
+			portfolio.getByRole('link', { name: 'FUKU STEEL PLATE FUND', exact: true })
+		).toHaveAttribute('href', 'https://teppan.ownerbook.io');
 		await expect(portfolio.getByRole('link', { name: 'D6E', exact: true })).toHaveAttribute(
 			'href',
 			'https://www.d6e.ai'
