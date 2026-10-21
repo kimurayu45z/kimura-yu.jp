@@ -12,12 +12,13 @@ export interface PortfolioCase {
 	period: string;
 	status: string;
 	summary: string;
+	overview: { title: string; summary: string };
 	background: string;
 	role: string;
 	actions: string[];
 	outcomes: string[];
 	scope: string;
-	links: PortfolioLink[];
+	links: [PortfolioLink, ...PortfolioLink[]];
 }
 
 export interface Portfolio {
@@ -87,7 +88,7 @@ const portfolios: Record<Locale, Portfolio> = {
 		],
 		labels: {
 			profile: 'プロフィール',
-			portfolio: '実績・ポートフォリオ',
+			portfolio: '実績',
 			read: '実績を見る',
 			pdf: 'PDFをダウンロード',
 			print: '印刷用ページ',
@@ -106,6 +107,11 @@ const portfolios: Record<Locale, Portfolio> = {
 		cases: [
 			{
 				id: 'fuku-steel-plate-fund',
+				overview: {
+					title: 'FUKU',
+					summary:
+						'シンガポールの敷鉄板リースファンド。スキーム設計・投資家対応・システム開発を担当。'
+				},
 				title: 'FUKU STEEL PLATE FUND L.P.',
 				category: 'ファンド組成・事業構築',
 				period: '2026年4月に組成を発表 / 現在も参画',
@@ -132,6 +138,10 @@ const portfolios: Record<Locale, Portfolio> = {
 			},
 			{
 				id: 'd6e-systems',
+				overview: {
+					title: 'D6E',
+					summary: 'D6Eを基盤に、業務に合わせた複数のシステムを設計・開発。'
+				},
 				title: 'D6Eを基盤とした複数システムの開発',
 				category: '業務理解・設計・システム実装',
 				period: '継続開発',
@@ -160,6 +170,10 @@ const portfolios: Record<Locale, Portfolio> = {
 			},
 			{
 				id: 'crypto-asset-rescue',
+				overview: {
+					title: 'ホワイトハッカー',
+					summary: '当時約5億円規模の暗号資産救出。回収システムの開発・運用を担当。'
+				},
 				title: '暗号資産の救出と緊急システム運用',
 				category: 'セキュリティ・実装・障害対応',
 				period: '2022年1月〜2月',
@@ -228,6 +242,11 @@ const portfolios: Record<Locale, Portfolio> = {
 		cases: [
 			{
 				id: 'fuku-steel-plate-fund',
+				overview: {
+					title: 'FUKU',
+					summary:
+						'A steel-plate leasing fund in Singapore. I handle structure design, investor communication and systems development.'
+				},
 				title: 'FUKU STEEL PLATE FUND L.P.',
 				category: 'Fund formation & business development',
 				period: 'Formation announced April 2026 / ongoing',
@@ -255,6 +274,10 @@ const portfolios: Record<Locale, Portfolio> = {
 			},
 			{
 				id: 'd6e-systems',
+				overview: {
+					title: 'D6E',
+					summary: 'Designing and developing multiple business systems on the D6E foundation.'
+				},
 				title: 'Building business systems on D6E',
 				category: 'Business analysis, architecture & implementation',
 				period: 'Ongoing development',
@@ -284,6 +307,11 @@ const portfolios: Record<Locale, Portfolio> = {
 			},
 			{
 				id: 'crypto-asset-rescue',
+				overview: {
+					title: 'White-hat hacking',
+					summary:
+						'Helped rescue crypto assets worth about JPY 500 million at the time, building and operating the recovery tools.'
+				},
 				title: 'Crypto-asset rescue & incident operations',
 				category: 'Security, engineering & incident response',
 				period: 'January-February 2022',
@@ -350,6 +378,10 @@ const portfolios: Record<Locale, Portfolio> = {
 		cases: [
 			{
 				id: 'fuku-steel-plate-fund',
+				overview: {
+					title: 'FUKU',
+					summary: '新加坡建筑钢板租赁基金。负责结构设计、投资者沟通和系统开发。'
+				},
 				title: 'FUKU STEEL PLATE FUND L.P.',
 				category: '基金设立与业务构建',
 				period: '2026年4月公布设立 / 持续参与',
@@ -376,6 +408,7 @@ const portfolios: Record<Locale, Portfolio> = {
 			},
 			{
 				id: 'd6e-systems',
+				overview: { title: 'D6E', summary: '基于D6E平台，设计和开发适合具体业务的多个系统。' },
 				title: '基于D6E开发多个业务系统',
 				category: '业务分析、架构与系统实现',
 				period: '持续开发',
@@ -404,6 +437,10 @@ const portfolios: Record<Locale, Portfolio> = {
 			},
 			{
 				id: 'crypto-asset-rescue',
+				overview: {
+					title: '白帽安全',
+					summary: '参与救出当时估值约5亿日元的加密资产，负责回收系统的开发与运维。'
+				},
 				title: '加密资产救援与应急运维',
 				category: '安全、开发与故障响应',
 				period: '2022年1月至2月',

@@ -78,7 +78,7 @@ const projects = content.cases.map((project) => ({
 					<p class="case-period">
 						{project.period} <span>{project.status}</span>
 					</p>
-					<p class="case-summary">{project.summary}</p>
+					<p class="case-summary">{project.overview.summary}</p>
 				</header>
 				{project.image && (
 					<figure
@@ -154,10 +154,10 @@ const projects = content.cases.map((project) => ({
 				<p class="case-scope">{project.scope}</p>
 				<a
 					class="case-permalink"
-					href={`${site.url}/${locale}/portfolio#${project.id}`}
+					href={`${site.url}/${locale}#${project.id}`}
 					aria-label={`${labels.caseLink}: ${project.title}`}
 				>
-					kimura-yu.jp/{locale}/portfolio#{project.id}
+					kimura-yu.jp/{locale}#{project.id}
 				</a>
 			</article>
 		))

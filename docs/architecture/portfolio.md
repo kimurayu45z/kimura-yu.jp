@@ -4,12 +4,14 @@
 
 実績本文の正本は `src/content/portfolio.ts`。Paraglideから取得した `en`、`ja`、`zh` のlocaleに対応する本文を返す。公開画像と出典は `src/content/portfolio-media.ts` で管理する。
 
-`PortfolioDocument.astro` をWebと印刷ページの両方で使う。別のPDF用原稿は作らない。各事例のIDは固定し、`/{locale}/portfolio#fuku-steel-plate-fund` のような直接リンクを維持する。
+Webは `PortfolioSection.svelte` をプロフィールの一番下に置き、大きなLucideアイコンと短い概要だけを表示する。見出しから公開サイトや記事へ直接リンクする。別の実績ページには移動させない。
+
+概要は同じ実績データの `overview` をWebとPDFで共有する。提出用の詳細項目は `PortfolioDocument.astro` で印刷する。各事例のIDは固定し、`/{locale}#fuku-steel-plate-fund` のような直接リンクを維持する。
 
 ## 経路
 
-- `/{locale}`: 既存の名刺に実績への入口を追加。
-- `/{locale}/portfolio`: 自己紹介と3事例。
+- `/{locale}#portfolio`: 学歴・資格の下に置いた実績セクション。
+- `/{locale}/portfolio`: 既存リンクを受けるため、上記セクションへ308リダイレクト。
 - `/{locale}/portfolio/print`: 操作UIを含まない印刷版。検索結果には掲載しない。
 - `/portfolio/kimura-yu-portfolio-ja.pdf`: 同じ原稿から生成した提出用の日本語PDF。
 

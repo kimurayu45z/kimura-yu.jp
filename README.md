@@ -15,7 +15,7 @@ pnpm dev
 
 ## 実績と提出用PDF
 
-`/{locale}/portfolio` が実績ページです。原稿は `src/content/portfolio.ts`、Webと印刷版の表示は共通コンポーネントで管理します。
+`/{locale}#portfolio` に、大きなアイコンと短い概要の実績セクションを配置しています。原稿は `src/content/portfolio.ts` で管理し、概要を提出用PDFと共有します。
 
 ```sh
 pnpm exec playwright install chromium

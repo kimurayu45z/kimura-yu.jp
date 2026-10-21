@@ -3,20 +3,26 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 
 for (const locale of ['ja', 'en', 'zh']) {
-	test(`keeps ${locale} portfolio text consistent between Web and print`, async ({ page }) => {
-		await page.goto(`/${locale}/portfolio`);
-		await expect(page.locator('article.case-study')).toHaveCount(3);
-		await expect(page.locator('article.case-study h3')).toHaveCount(15);
-		await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+	test(`keeps ${locale} work at the bottom of the profile with shared PDF summaries`, async ({
+		page
+	}) => {
+		await page.goto(`/${locale}`);
+		const portfolio = page.locator('#portfolio');
+		await expect(page.locator('.card-page > section').last()).toHaveAttribute('id', 'portfolio');
+		await expect(portfolio.locator('article')).toHaveCount(3);
+		const summaries = await portfolio.locator('.project-copy p').allTextContents();
+		await expect(portfolio.getByRole('link', { name: 'FUKU', exact: true })).toHaveAttribute(
 			'href',
-			`https://www.kimura-yu.jp/${locale}/portfolio`
+			'https://teppan.ownerbook.io'
 		);
-		const webText = await page.locator('.portfolio-document').textContent();
-		for (const project of ['fuku-steel-plate-fund', 'd6e-systems', 'crypto-asset-rescue']) {
-			await expect(page.locator(`a[href="#${project}"]`)).toHaveCount(1);
-		}
+		await expect(portfolio.getByRole('link', { name: 'D6E', exact: true })).toHaveAttribute(
+			'href',
+			'https://www.d6e.ai'
+		);
+		await expect(portfolio.locator('a[href*="/portfolio#"]')).toHaveCount(0);
 		await page.goto(`/${locale}/portfolio/print`);
-		expect(await page.locator('.portfolio-document').textContent()).toBe(webText);
+		expect(await page.locator('.case-summary').allTextContents()).toEqual(summaries);
+		await expect(page.locator('article.case-study h3')).toHaveCount(15);
 		await expect(
 			page.locator('button, [data-slot="button"], body > header, body > footer')
 		).toHaveCount(0);
@@ -27,23 +33,21 @@ for (const locale of ['ja', 'en', 'zh']) {
 	});
 }
 
-test('links the profile to cases and keeps the portfolio route when switching languages', async ({
-	page
-}) => {
+test('keeps inline case links inside a narrow viewport', async ({ page }) => {
 	await page.setViewportSize({ width: 390, height: 844 });
-	await page.goto('/ja');
-	await page.getByRole('link', { name: '実績を見る', exact: true }).click();
-	await expect(page).toHaveURL(/\/ja\/portfolio$/);
+	await page.goto('/ja#d6e-systems');
+	await expect(page.locator('#d6e-systems')).toBeInViewport();
 	expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(
 		false
 	);
 	await page.getByRole('button', { name: '言語', exact: true }).click();
-	await expect(page.getByRole('menuitem', { name: 'English' })).toHaveAttribute(
-		'href',
-		'/en/portfolio'
-	);
-	await page.getByRole('menuitem', { name: 'English' }).click();
-	await expect(page).toHaveURL(/\/en\/portfolio$/);
+	await expect(page.getByRole('menuitem', { name: 'English' })).toHaveAttribute('href', '/en');
+});
+
+test('redirects the old dedicated page to the profile section', async ({ request }) => {
+	const response = await request.get('/ja/portfolio', { maxRedirects: 0 });
+	expect(response.status()).toBe(308);
+	expect(response.headers().location).toBe('/ja#portfolio');
 });
 
 test('serves a generated PDF whose manifest matches the shared content', async ({ request }) => {
