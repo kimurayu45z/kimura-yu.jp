@@ -70,7 +70,7 @@ const headerLabels = {
 	</head>
 	<body>
 		<div class="flex min-h-svh flex-col">
-			<Header {locale} {mode} {isAuthenticated} labels={headerLabels} client:load />
+			<Header {locale} {mode} {isAuthenticated} {pagePath} labels={headerLabels} client:load />
 			<main class="flex-1">
 				<slot />
 			</main>

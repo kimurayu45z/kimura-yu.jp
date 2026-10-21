@@ -1,0 +1,36 @@
+---
+import PortfolioActions from '@/components/PortfolioActions.svelte';
+import PortfolioDocument from '@/components/PortfolioDocument.astro';
+import { getPortfolio } from '@/content/portfolio';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getLocale } from '@/paraglide/runtime';
+
+const locale = getLocale();
+const content = getPortfolio(locale);
+---
+
+<BaseLayout
+	{locale}
+	pagePath="/portfolio"
+	title={`${content.title} | KIMURA Yu`}
+	description={content.intro}
+>
+	<div class="portfolio-shell">
+		<PortfolioActions {locale} labels={content.labels} />
+		<PortfolioDocument {locale} />
+	</div>
+</BaseLayout>
+
+<style>
+	.portfolio-shell {
+		width: min(100% - 2rem, 56rem);
+		margin-inline: auto;
+		padding-block: 1.5rem 4rem;
+	}
+	@media print {
+		.portfolio-shell {
+			width: 100%;
+			padding: 0;
+		}
+	}
+</style>

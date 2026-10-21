@@ -3,6 +3,8 @@ import { ArrowUpRight, GraduationCap, Mail, Phone, ShieldCheck } from '@lucide/a
 
 import BusinessCardCarousel from '@/components/BusinessCardCarousel.svelte';
 import ShareActions from '@/components/ShareActions.svelte';
+import PortfolioTeaser from '@/components/PortfolioTeaser.svelte';
+import { getPortfolio } from '@/content/portfolio';
 import type { PrivateContacts } from '@/lib/server/contacts';
 import { publicContacts } from '@/lib/server/contacts';
 import * as m from '@/paraglide/messages';
@@ -189,6 +191,8 @@ const restrictedSocials = [
 			</section>
 		)
 	}
+
+	<PortfolioTeaser {locale} content={getPortfolio(locale)} />
 
 	<section class="app-panel mt-5" aria-labelledby="social-heading">
 		<h2 id="social-heading">{m.contact_social()}</h2>

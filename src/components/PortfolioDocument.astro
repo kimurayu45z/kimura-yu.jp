@@ -1,0 +1,579 @@
+---
+import { getPortfolio, portfolioUpdated } from '@/content/portfolio';
+import { portfolioImage } from '@/content/portfolio-media';
+import type { Locale } from '@/paraglide/runtime';
+import { site } from '@/site';
+
+interface Props {
+	locale: Locale;
+	presentation?: 'web' | 'print';
+}
+const { locale, presentation = 'web' } = Astro.props;
+const content = getPortfolio(locale);
+const { labels } = content;
+const projects = content.cases.map((project) => ({
+	...project,
+	image: portfolioImage(project.id, locale)
+}));
+---
+
+<div class:list={['portfolio-document', { 'print-document': presentation === 'print' }]}>
+	<section class="portfolio-cover" aria-labelledby="portfolio-title">
+		<div class="cover-heading">
+			<p class="document-owner">KIMURA Yu</p>
+			<h1 id="portfolio-title">{content.title}</h1>
+			<p class="cover-name">{content.name}</p>
+		</div>
+		<p class="portfolio-intro">{content.intro}</p>
+		<p class="portfolio-bio">{content.bio}</p>
+		<section class="approach" aria-labelledby="approach-heading">
+			<h2 id="approach-heading">{content.approachTitle}</h2>
+			<dl>
+				{
+					content.approach.map((item) => (
+						<div>
+							<>
+								<dt>{item.title}</dt>
+								<dd>{item.body}</dd>
+							</>
+						</div>
+					))
+				}
+			</dl>
+		</section>
+		<nav class="portfolio-contents" aria-label={labels.contents}>
+			<h2>{labels.contents}</h2>
+			<ul>
+				{
+					content.cases.map((project) => (
+						<li>
+							<a href={`#${project.id}`}>
+								<>
+									<span>{project.title}</span>
+									<small>{project.category}</small>
+								</>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+		<div class="portfolio-contact">
+			<h2>{labels.contact}</h2>
+			<p>{labels.contactBody}</p>
+			<a href={`${site.url}/${locale}`}>www.kimura-yu.jp/{locale}</a>
+		</div>
+		<p class="document-date">
+			{labels.updated}
+			<time datetime={portfolioUpdated}>{portfolioUpdated}</time>
+		</p>
+	</section>
+
+	{
+		projects.map((project) => (
+			<article class="case-study" id={project.id} aria-labelledby={`${project.id}-heading`}>
+				<header class="case-heading">
+					<p class="case-category">{project.category}</p>
+					<h2 id={`${project.id}-heading`}>{project.title}</h2>
+					<p class="case-period">
+						{project.period} <span>{project.status}</span>
+					</p>
+					<p class="case-summary">{project.summary}</p>
+				</header>
+				{project.image && (
+					<figure
+						class:list={['case-image', { 'plate-image': project.id === 'fuku-steel-plate-fund' }]}
+					>
+						<img
+							src={project.image.src}
+							width={project.image.width}
+							height={project.image.height}
+							alt={project.image.alt}
+						/>
+						<figcaption>
+							<a href={project.image.source} target="_blank" rel="noreferrer">
+								{project.image.caption}
+							</a>
+						</figcaption>
+					</figure>
+				)}
+				<div class="case-sections">
+					<section>
+						<>
+							<h3>{labels.background}</h3>
+							<p>{project.background}</p>
+						</>
+					</section>
+					<section>
+						<>
+							<h3>{labels.role}</h3>
+							<p>{project.role}</p>
+						</>
+					</section>
+					<section>
+						<>
+							<h3>{labels.actions}</h3>
+							<ul>
+								{project.actions.map((action) => (
+									<li>{action}</li>
+								))}
+							</ul>
+						</>
+					</section>
+					<section class="case-outcomes">
+						<>
+							<h3>{labels.outcomes}</h3>
+							<ul>
+								{project.outcomes.map((outcome) => (
+									<li>{outcome}</li>
+								))}
+							</ul>
+						</>
+					</section>
+					<section class="case-links">
+						<h3>{labels.links}</h3>
+						<ul>
+							{project.links.map((link) => (
+								<li>
+									<a href={link.href} target="_blank" rel="noreferrer">
+										{link.label}
+										<span class="print-url">
+											{new URL(link.href).hostname +
+												(link.href.includes('prtimes.jp')
+													? '/…/000000001.000180544.html'
+													: link.href.includes('mintscan.io')
+														? '/cosmos/txs/670DDE59…'
+														: new URL(link.href).pathname.replace(/\/$/, ''))}
+										</span>
+									</a>
+								</li>
+							))}
+						</ul>
+					</section>
+				</div>
+				<p class="case-scope">{project.scope}</p>
+				<a
+					class="case-permalink"
+					href={`${site.url}/${locale}/portfolio#${project.id}`}
+					aria-label={`${labels.caseLink}: ${project.title}`}
+				>
+					kimura-yu.jp/{locale}/portfolio#{project.id}
+				</a>
+			</article>
+		))
+	}
+</div>
+
+<style>
+	.portfolio-document {
+		color: var(--foreground);
+	}
+	.portfolio-cover {
+		position: relative;
+		padding: clamp(1.5rem, 5vw, 3rem);
+		background: var(--card);
+		border-radius: 1.4rem;
+	}
+	.document-owner {
+		font-size: 0.82rem;
+		font-weight: 650;
+		letter-spacing: 0.07em;
+		color: var(--muted-foreground);
+	}
+	h1 {
+		margin-top: 0.65rem;
+		font-size: clamp(2rem, 6vw, 3.25rem);
+		line-height: 1.2;
+		font-weight: 750;
+	}
+	.cover-name {
+		margin-top: 0.7rem;
+		font-size: 1.1rem;
+		font-weight: 650;
+	}
+	.portfolio-intro {
+		margin-top: 1.9rem;
+		max-width: 36rem;
+		font-size: 1.02rem;
+		font-weight: 600;
+		line-height: 1.9;
+	}
+	.portfolio-bio {
+		margin-top: 1rem;
+		color: var(--muted-foreground);
+		font-size: 0.82rem;
+		line-height: 1.85;
+	}
+	.approach {
+		margin-top: 2rem;
+	}
+	.approach h2,
+	.portfolio-contents h2,
+	.portfolio-contact h2 {
+		font-size: 0.85rem;
+		font-weight: 700;
+	}
+	.approach dl {
+		display: grid;
+		gap: 1rem;
+		margin-top: 0.8rem;
+	}
+	.approach dl > div {
+		display: grid;
+		grid-template-columns: 10.5rem 1fr;
+		gap: 1rem;
+	}
+	.approach dt {
+		font-size: 0.85rem;
+		font-weight: 650;
+	}
+	.approach dd {
+		font-size: 0.82rem;
+		line-height: 1.8;
+		color: var(--muted-foreground);
+	}
+	.portfolio-contents {
+		margin-top: 2rem;
+	}
+	.portfolio-contents ul {
+		margin-top: 0.6rem;
+		display: grid;
+	}
+	.portfolio-contents li {
+		border-bottom: 1px solid var(--border);
+	}
+	.portfolio-contents a {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1rem;
+		padding-block: 0.85rem;
+		font-size: 0.85rem;
+		font-weight: 600;
+	}
+	.portfolio-contents a:hover span {
+		text-decoration: underline;
+		text-underline-offset: 0.25em;
+	}
+	.portfolio-contents small {
+		flex: none;
+		color: var(--muted-foreground);
+		font-size: 0.65rem;
+		font-weight: 500;
+	}
+	.portfolio-contact {
+		margin-top: 1.6rem;
+	}
+	.portfolio-contact p {
+		margin-block: 0.4rem;
+		font-size: 0.8rem;
+		color: var(--muted-foreground);
+	}
+	.portfolio-contact a {
+		font-size: 0.83rem;
+		font-weight: 600;
+		text-decoration: underline;
+		text-underline-offset: 0.2em;
+	}
+	.document-date {
+		margin-top: 1.3rem;
+		color: var(--muted-foreground);
+		font-size: 0.68rem;
+	}
+	.case-study {
+		margin-top: 2rem;
+		padding: clamp(1.5rem, 5vw, 3rem);
+		background: var(--card);
+		border-radius: 1.4rem;
+		scroll-margin-top: 5rem;
+	}
+	.case-category {
+		color: var(--muted-foreground);
+		font-size: 0.75rem;
+		font-weight: 600;
+	}
+	.case-heading h2 {
+		margin-top: 0.5rem;
+		font-size: clamp(1.5rem, 4vw, 2rem);
+		line-height: 1.45;
+		font-weight: 700;
+		overflow-wrap: anywhere;
+	}
+	.case-period {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1rem;
+		margin-top: 0.8rem;
+		color: var(--muted-foreground);
+		font-size: 0.72rem;
+	}
+	.case-period span {
+		font-weight: 650;
+		color: var(--foreground);
+	}
+	.case-summary {
+		margin-top: 1.25rem;
+		font-weight: 600;
+		font-size: 0.95rem;
+		line-height: 1.85;
+	}
+	.case-sections {
+		display: grid;
+		gap: 1.4rem;
+		margin-top: 1.8rem;
+	}
+	.case-sections section {
+		display: grid;
+		grid-template-columns: 9rem minmax(0, 1fr);
+		gap: 1rem;
+	}
+	.case-sections h3 {
+		font-size: 0.78rem;
+		font-weight: 700;
+		line-height: 1.8;
+	}
+	.case-sections p,
+	.case-sections li {
+		font-size: 0.85rem;
+		line-height: 1.95;
+	}
+	.case-sections ul {
+		padding-left: 1rem;
+		list-style-type: disc;
+	}
+	.case-sections li + li {
+		margin-top: 0.45rem;
+	}
+	.case-outcomes {
+		padding-block: 1rem;
+		border-top: 1px solid var(--border);
+		border-bottom: 1px solid var(--border);
+	}
+	.case-links ul {
+		list-style: none;
+		padding: 0;
+	}
+	.case-links a {
+		text-decoration: underline;
+		text-underline-offset: 0.23em;
+		overflow-wrap: anywhere;
+	}
+	.case-scope {
+		margin-top: 1.5rem;
+		color: var(--muted-foreground);
+		font-size: 0.7rem;
+		line-height: 1.8;
+	}
+	.case-permalink {
+		display: inline-block;
+		max-width: 100%;
+		margin-top: 0.8rem;
+		color: var(--muted-foreground);
+		font-size: 0.67rem;
+		overflow-wrap: anywhere;
+	}
+	.print-url {
+		display: none;
+	}
+	.case-image {
+		margin-top: 1.5rem;
+		break-inside: avoid;
+	}
+	.case-image img {
+		width: 100%;
+		height: auto;
+		max-height: 20rem;
+		object-fit: contain;
+		border: 1px solid var(--border);
+		border-radius: 0.5rem;
+	}
+	.plate-image img {
+		height: 12rem;
+		object-fit: cover;
+		object-position: 50% 55%;
+	}
+	.case-image figcaption {
+		margin-top: 0.45rem;
+		color: var(--muted-foreground);
+		font-size: 0.65rem;
+		line-height: 1.7;
+	}
+	@media screen and (max-width: 620px) {
+		.approach dl > div,
+		.case-sections section {
+			grid-template-columns: 1fr;
+			gap: 0.35rem;
+		}
+		.portfolio-contents a {
+			flex-direction: column;
+			gap: 0.25rem;
+		}
+		.case-sections {
+			gap: 1.3rem;
+		}
+	}
+	@media screen {
+		.print-document {
+			max-width: 210mm;
+			margin: 1.5rem auto;
+		}
+		.print-document .portfolio-cover,
+		.print-document .case-study {
+			border: 1px solid var(--border);
+		}
+	}
+	@media print {
+		.case-image {
+			margin-top: 4mm;
+		}
+		.case-image img {
+			max-height: 40mm;
+			width: 100%;
+		}
+		.plate-image img {
+			height: 30mm;
+			object-fit: cover;
+		}
+		.case-image figcaption {
+			margin-top: 1mm;
+			font-size: 6.5pt;
+		}
+		.portfolio-document {
+			font-family: 'Noto Sans JP', 'Noto Sans CJK JP', sans-serif;
+			color: #14213d;
+		}
+		.portfolio-cover,
+		.case-study {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			border-radius: 0;
+			background: white;
+			box-shadow: none;
+		}
+		.portfolio-cover {
+			padding-top: 5mm;
+		}
+		.case-study {
+			break-before: page;
+		}
+		h1 {
+			font-size: 29pt;
+		}
+		.document-owner {
+			font-size: 10pt;
+		}
+		.cover-name {
+			font-size: 14pt;
+		}
+		.portfolio-intro {
+			max-width: none;
+			margin-top: 9mm;
+			font-size: 12pt;
+			line-height: 1.9;
+		}
+		.portfolio-bio {
+			font-size: 9pt;
+			margin-top: 4mm;
+		}
+		.approach {
+			margin-top: 9mm;
+		}
+		.approach dl {
+			gap: 4mm;
+		}
+		.approach dl > div {
+			grid-template-columns: 43mm 1fr;
+			gap: 5mm;
+		}
+		.approach h2,
+		.portfolio-contents h2,
+		.portfolio-contact h2 {
+			font-size: 10pt;
+		}
+		.approach dt,
+		.approach dd {
+			font-size: 9pt;
+		}
+		.portfolio-contents {
+			margin-top: 8mm;
+		}
+		.portfolio-contents a {
+			font-size: 9pt;
+			padding-block: 3mm;
+		}
+		.portfolio-contents small {
+			font-size: 7pt;
+		}
+		.portfolio-contact {
+			margin-top: 7mm;
+		}
+		.portfolio-contact p,
+		.portfolio-contact a {
+			font-size: 9pt;
+		}
+		.document-date {
+			margin-top: 5mm;
+			font-size: 7.5pt;
+		}
+		.case-category,
+		.case-period {
+			font-size: 8.5pt;
+		}
+		.case-heading h2 {
+			font-size: 20pt;
+			margin-top: 3mm;
+		}
+		.case-summary {
+			font-size: 10.5pt;
+			margin-top: 5mm;
+		}
+		.case-sections {
+			margin-top: 6mm;
+			gap: 5mm;
+		}
+		.case-sections section {
+			grid-template-columns: 35mm minmax(0, 1fr);
+			gap: 5mm;
+			break-inside: avoid;
+		}
+		.case-sections h3 {
+			font-size: 8.5pt;
+		}
+		.case-sections p,
+		.case-sections li {
+			font-size: 9pt;
+			line-height: 1.85;
+		}
+		.case-sections li + li {
+			margin-top: 2mm;
+		}
+		.case-outcomes {
+			padding-block: 4mm;
+		}
+		.case-scope {
+			font-size: 7.5pt;
+			margin-top: 5mm;
+		}
+		.case-permalink {
+			font-size: 7pt;
+			margin-top: 3mm;
+		}
+		.case-links li {
+			font-size: 8pt;
+		}
+		.case-links ul {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 2mm 4mm;
+		}
+		.case-links li + li {
+			margin-top: 0;
+		}
+		.print-url {
+			display: block;
+			font-size: 7pt;
+			color: #65718a;
+		}
+	}
+</style>

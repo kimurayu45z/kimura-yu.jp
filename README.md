@@ -13,6 +13,17 @@ pnpm dev
 
 `en`、`ja`、`zh` がParaglideのlocaleです。URLは `/en`、`/ja`、`/zh` を使い、中国語ページのHTML言語タグも `zh` を出力します。
 
+## 実績と提出用PDF
+
+`/{locale}/portfolio` が実績ページです。原稿は `src/content/portfolio.ts`、Webと印刷版の表示は共通コンポーネントで管理します。
+
+```sh
+pnpm exec playwright install chromium
+pnpm run portfolio:pdf
+```
+
+日本語PDFは `output/pdf/kimura-yu-portfolio-ja.pdf` に出力します。`pnpm run build` とCDでも同じ原稿から毎回生成するため、手作業でPDFを更新する必要はありません。詳しくは [設計](docs/architecture/portfolio.md) と [原稿の確認記録](docs/editorial/portfolio-evidence.md) を参照してください。
+
 ## 非公開モード
 
 非公開ページは `/{locale}/private` です。日付やアクセス元のタイムゾーンは認証に使いません。日付は推測可能で、IPベースの所在地はVPN・ローミング・組織ネットワーク・日付境界の影響を受けるためです。

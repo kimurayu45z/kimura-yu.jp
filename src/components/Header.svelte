@@ -13,6 +13,7 @@
 		locale: Locale;
 		mode: 'public' | 'private';
 		isAuthenticated?: boolean;
+		pagePath?: string;
 		labels: {
 			publicMode: string;
 			privateMode: string;
@@ -21,10 +22,9 @@
 		};
 	}
 
-	let { locale, mode, isAuthenticated = false, labels }: Props = $props();
+	let { locale, mode, isAuthenticated = false, pagePath = '', labels }: Props = $props();
 
-	const pathForLocale = (nextLocale: Locale): string =>
-		mode === 'private' ? `/${nextLocale}/private` : `/${nextLocale}`;
+	const pathForLocale = (nextLocale: Locale): string => `/${nextLocale}${pagePath}`;
 </script>
 
 <header class="sticky top-0 z-50 bg-background/80 backdrop-blur-xl">

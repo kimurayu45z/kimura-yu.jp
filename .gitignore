@@ -8,4 +8,8 @@ worker-configuration.d.ts
 src/paraglide/
 playwright-report/
 test-results/
+output/
+tmp/
+public/portfolio/*.pdf
+public/portfolio/manifest.json
 
