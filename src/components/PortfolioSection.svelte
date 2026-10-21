@@ -1,12 +1,9 @@
 <script lang="ts">
 	import ArrowUpRight from '@lucide/svelte/icons/arrow-up-right';
-	import Download from '@lucide/svelte/icons/download';
 	import Landmark from '@lucide/svelte/icons/landmark';
 	import ShieldCheck from '@lucide/svelte/icons/shield-check';
 	import Workflow from '@lucide/svelte/icons/workflow';
-	import { Button } from '@/components/ui/button';
-	import * as Card from '@/components/ui/card';
-	import { portfolioPdfPath, type Portfolio } from '@/content/portfolio';
+	import type { Portfolio } from '@/content/portfolio';
 
 	let { content }: { content: Portfolio } = $props();
 	const icons = {
@@ -16,36 +13,22 @@
 	};
 </script>
 
-<section id="portfolio" aria-labelledby="portfolio-heading" class="mt-4">
-	<Card.Root size="sm">
-		<Card.Header>
-			<Card.Title><h2 id="portfolio-heading">{content.labels.portfolio}</h2></Card.Title>
-		</Card.Header>
-		<Card.Content>
-			<div class="projects">
-				{#each content.cases as project (project.id)}
-					{@const Icon = icons[project.id as keyof typeof icons]}
-					<article id={project.id} class="project" aria-labelledby={`${project.id}-heading`}>
-						<div class="project-icon" aria-hidden="true"><Icon strokeWidth={1.35} /></div>
-						<div class="project-copy">
-							<h3 id={`${project.id}-heading`}>
-								<a href={project.links[0].href} target="_blank" rel="noreferrer">
-									{project.overview.title}<ArrowUpRight aria-hidden="true" />
-								</a>
-							</h3>
-							<p>{project.overview.summary}</p>
-						</div>
-					</article>
-				{/each}
+<div class="projects">
+	{#each content.cases as project (project.id)}
+		{@const Icon = icons[project.id]}
+		<article id={project.id} class="project" aria-labelledby={`${project.id}-heading`}>
+			<div class="project-icon" aria-hidden="true"><Icon strokeWidth={1.35} /></div>
+			<div class="project-copy">
+				<h3 id={`${project.id}-heading`}>
+					<a href={project.href} target="_blank" rel="noreferrer"
+						>{project.title}<ArrowUpRight aria-hidden="true" /></a
+					>
+				</h3>
+				<p>{project.summary}</p>
 			</div>
-		</Card.Content>
-		<Card.Footer>
-			<Button href={portfolioPdfPath} download variant="outline" size="sm" class="w-full">
-				<Download data-icon="inline-start" />{content.labels.pdf}
-			</Button>
-		</Card.Footer>
-	</Card.Root>
-</section>
+		</article>
+	{/each}
+</div>
 
 <style>
 	.projects {

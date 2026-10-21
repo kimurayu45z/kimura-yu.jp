@@ -13,16 +13,11 @@ pnpm dev
 
 `en`、`ja`、`zh` がParaglideのlocaleです。URLは `/en`、`/ja`、`/zh` を使い、中国語ページのHTML言語タグも `zh` を出力します。
 
-## 実績と提出用PDF
+## 実績と印刷
 
-`/{locale}#portfolio` に、大きなアイコンと短い概要の実績セクションを配置しています。原稿は `src/content/portfolio.ts` で管理し、概要を提出用PDFと共有します。
+`/{locale}#portfolio` に実績を掲載しています。ブラウザの印刷機能でページをそのまま印刷・PDF保存できます。印刷時にはヘッダーや操作ボタンを隠します。専用PDFの生成・ダウンロードは行いません。
 
-```sh
-pnpm exec playwright install chromium
-pnpm run portfolio:pdf
-```
-
-日本語PDFは `output/pdf/kimura-yu-portfolio-ja.pdf` に出力します。`pnpm run build` とCDでも同じ原稿から毎回生成するため、手作業でPDFを更新する必要はありません。詳しくは [設計](docs/architecture/portfolio.md) と [原稿の確認記録](docs/editorial/portfolio-evidence.md) を参照してください。
+原稿は `src/content/portfolio.ts`、印刷スタイルは `src/styles/print.css` で管理します。[設計](docs/architecture/portfolio.md) も参照してください。
 
 ## 非公開モード
 

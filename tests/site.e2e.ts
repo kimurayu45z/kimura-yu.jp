@@ -129,7 +129,7 @@ test('protects private HTML and vCard until the access code is verified', async 
 	await expect(page.locator('img[src="/assets/logos/telegram.svg"]')).toBeVisible();
 	await expect(page.locator('img[src="/assets/logos/instagram.svg"]')).toBeVisible();
 	await expect(page.locator('.social-grid')).toBeVisible();
-	await expect(page.locator('.record-panel')).toHaveCount(2);
+	await expect(page.locator('.record-panel')).toHaveCount(3);
 	await expect(page.locator('img[src="/assets/logos/x.svg"]')).toBeVisible();
 
 	const sessionCookie = (await page.context().cookies()).find((cookie) =>

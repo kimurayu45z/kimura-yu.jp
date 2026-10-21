@@ -54,7 +54,7 @@
 >
 	<Carousel.Content>
 		{#each cards as card, index (card.id)}
-			<Carousel.Item>
+			<Carousel.Item data-print-active={current === index}>
 				<BusinessCard
 					{name}
 					{latinName}
@@ -69,7 +69,7 @@
 		{/each}
 	</Carousel.Content>
 
-	<div class="carousel-controls">
+	<div class="carousel-controls" data-screen-only>
 		<Carousel.Previous class="carousel-arrow" aria-label={previousLabel} />
 		<div class="carousel-position" aria-live="polite">
 			<div class="carousel-dots">

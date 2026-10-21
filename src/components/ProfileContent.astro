@@ -1,5 +1,12 @@
 ---
-import { ArrowUpRight, GraduationCap, Mail, Phone, ShieldCheck } from '@lucide/astro';
+import {
+	ArrowUpRight,
+	BriefcaseBusiness,
+	GraduationCap,
+	Mail,
+	Phone,
+	ShieldCheck
+} from '@lucide/astro';
 
 import BusinessCardCarousel from '@/components/BusinessCardCarousel.svelte';
 import ShareActions from '@/components/ShareActions.svelte';
@@ -100,7 +107,7 @@ const restrictedSocials = [
 		client:load
 	/>
 
-	<div class="mt-7">
+	<div class="mt-7" data-screen-only>
 		{
 			privateMode ? (
 				<ShareActions
@@ -264,7 +271,13 @@ const restrictedSocials = [
 		</ol>
 	</section>
 
-	<PortfolioSection content={getPortfolio(locale)} />
+	<section id="portfolio" class="record-panel mt-4" aria-labelledby="portfolio-heading">
+		<header>
+			<span class="row-icon"><BriefcaseBusiness /></span>
+			<h2 id="portfolio-heading">{getPortfolio(locale).title}</h2>
+		</header>
+		<div class="portfolio-body"><PortfolioSection content={getPortfolio(locale)} /></div>
+	</section>
 </section>
 
 <style>
@@ -365,6 +378,10 @@ const restrictedSocials = [
 	}
 	.record-panel {
 		overflow: hidden;
+	}
+	.portfolio-body {
+		border-top: 1px solid var(--border);
+		padding: 1.25rem;
 	}
 	.record-panel header {
 		display: flex;

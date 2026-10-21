@@ -1,0 +1,66 @@
+@page {
+	size: A4 portrait;
+	margin: 14mm;
+}
+
+@media print {
+	html,
+	body {
+		background: white !important;
+		background-image: none !important;
+		print-color-adjust: exact;
+		-webkit-print-color-adjust: exact;
+	}
+
+	body > div {
+		display: block !important;
+		min-height: 0 !important;
+	}
+
+	[data-screen-only] {
+		display: none !important;
+	}
+
+	.card-page {
+		width: 100% !important;
+		max-width: 38rem;
+		margin-inline: auto !important;
+		padding: 0 !important;
+	}
+
+	.record-panel,
+	.app-panel,
+	.private-panel,
+	.business-card-carousel {
+		break-inside: avoid;
+		box-shadow: none !important;
+	}
+
+	.business-card-face {
+		box-shadow: none !important;
+	}
+
+	.business-card-carousel [data-embla-container] {
+		display: block;
+		margin: 0 !important;
+		transform: none !important;
+	}
+
+	.business-card-carousel [data-embla-slide] {
+		padding: 0 !important;
+	}
+
+	.business-card-carousel [data-print-active='false'] {
+		display: none;
+	}
+
+	.projects {
+		grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+	}
+
+	.project {
+		display: flex !important;
+		flex-direction: column;
+		align-items: flex-start !important;
+	}
+}

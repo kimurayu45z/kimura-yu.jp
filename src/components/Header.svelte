@@ -27,7 +27,7 @@
 	const pathForLocale = (nextLocale: Locale): string => `/${nextLocale}${pagePath}`;
 </script>
 
-<header class="sticky top-0 z-50 bg-background/80 backdrop-blur-xl">
+<header class="sticky top-0 z-50 bg-background/80 backdrop-blur-xl" data-screen-only>
 	<div class="mx-auto flex h-16 w-full max-w-2xl items-center justify-end px-5 sm:px-7">
 		<div class="flex items-center gap-2">
 			<Button
