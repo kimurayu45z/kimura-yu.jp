@@ -10,6 +10,9 @@ for (const locale of ['ja', 'en', 'zh']) {
 		await expect(portfolio).toHaveClass(/record-panel/);
 		await expect(portfolio.locator('header .row-icon svg')).toBeVisible();
 		await expect(portfolio.locator('article')).toHaveCount(3);
+		expect(
+			await portfolio.locator('article').evaluateAll((items) => items.map((item) => item.id))
+		).toEqual(['crypto-asset-rescue', 'd6e-systems', 'fuku-steel-plate-fund']);
 		await expect(
 			portfolio.getByRole('link', { name: 'FUKU STEEL PLATE FUND', exact: true })
 		).toHaveAttribute('href', 'https://teppan.ownerbook.io');
