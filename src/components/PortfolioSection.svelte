@@ -37,13 +37,14 @@
 		padding-block: 0.5rem;
 	}
 	.project {
-		display: grid;
-		grid-template-columns: 4.5rem minmax(0, 1fr);
-		align-items: center;
-		gap: 1.2rem;
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 1.1rem;
 		scroll-margin-top: 6rem;
 	}
 	.project-icon {
+		align-self: center;
 		color: var(--primary);
 	}
 	.project-icon :global(svg) {
@@ -79,26 +80,14 @@
 	}
 	@media (min-width: 640px) {
 		.projects {
-			grid-template-columns: repeat(3, minmax(0, 1fr));
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 			align-items: start;
 			gap: 1.5rem;
 			padding-block: 0.75rem;
 		}
-		.project {
-			display: flex;
-			flex-direction: column;
-			align-items: flex-start;
-			gap: 1.1rem;
-		}
 		.project-icon :global(svg) {
 			width: 5rem;
 			height: 5rem;
-		}
-		h3 {
-			font-size: 0.85rem;
-		}
-		p {
-			font-size: 0.74rem;
 		}
 	}
 </style>

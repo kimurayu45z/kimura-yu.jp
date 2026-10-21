@@ -21,6 +21,48 @@ for (const locale of ['ja', 'en', 'zh']) {
 			'https://www.d6e.ai'
 		);
 		await expect(page.locator('a[download], a[href$=".pdf"]')).toHaveCount(0);
+		await expect(portfolio.locator('#crypto-asset-rescue p')).not.toContainText(
+			/担当|Helped|参与|负责/
+		);
+	});
+}
+
+for (const width of [1440, 390, 360]) {
+	test(`centers project icons and wraps columns at ${width}px`, async ({ page }) => {
+		await page.setViewportSize({ width, height: 1000 });
+		await page.goto('/ja#portfolio');
+		const grid = page.locator('#portfolio .projects');
+		const columns = await grid.evaluate(
+			(element) => getComputedStyle(element).gridTemplateColumns.split(' ').length
+		);
+		expect(columns).toBe(width >= 640 ? 2 : 1);
+		const layout = await grid.locator('article').evaluateAll((elements) =>
+			elements.map((element) => {
+				const column = element.getBoundingClientRect();
+				const icon = element.querySelector('.project-icon svg')!.getBoundingClientRect();
+				const copy = element.querySelector('.project-copy')!.getBoundingClientRect();
+				return {
+					top: column.top,
+					bottom: column.bottom,
+					iconBottom: icon.bottom,
+					copyTop: copy.top,
+					centerOffset: Math.abs(icon.left + icon.width / 2 - (column.left + column.width / 2))
+				};
+			})
+		);
+		for (const item of layout) {
+			expect(item.centerOffset).toBeLessThanOrEqual(1);
+			expect(item.iconBottom).toBeLessThan(item.copyTop);
+		}
+		if (width >= 640) {
+			const [first, second, third] = layout;
+			if (!first || !second || !third) throw new Error('Expected three portfolio entries');
+			expect(first.top).toBe(second.top);
+			expect(third.top).toBeGreaterThan(Math.max(first.bottom, second.bottom));
+		}
+		expect(
+			await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)
+		).toBe(false);
 	});
 }
 
@@ -61,6 +103,19 @@ test('prints the current profile without navigation or actions', async ({ page }
 	await expect(page.locator('#education')).toBeVisible();
 	await expect(page.locator('#credentials')).toBeVisible();
 	await expect(page.locator('#portfolio')).toBeVisible();
+	expect(
+		await page
+			.locator('#portfolio .projects')
+			.evaluate((element) => getComputedStyle(element).gridTemplateColumns.split(' ').length)
+	).toBe(2);
+	const printIconOffsets = await page.locator('#portfolio article').evaluateAll((elements) =>
+		elements.map((element) => {
+			const column = element.getBoundingClientRect();
+			const icon = element.querySelector('.project-icon svg')!.getBoundingClientRect();
+			return Math.abs(icon.left + icon.width / 2 - (column.left + column.width / 2));
+		})
+	);
+	for (const offset of printIconOffsets) expect(offset).toBeLessThanOrEqual(1);
 });
 
 test('redirects the former dedicated page and no longer serves generated PDF files', async ({

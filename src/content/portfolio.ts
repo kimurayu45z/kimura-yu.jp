@@ -19,7 +19,7 @@ const portfolios: Record<Locale, Portfolio> = {
 			{
 				id: 'crypto-asset-rescue',
 				title: 'ホワイトハッカー',
-				summary: '当時約5億円規模の暗号資産救出。回収システムの開発・運用を担当。',
+				summary: '当時約5億円規模の暗号資産を救出。回収システムを開発・運用。',
 				href: 'https://note.com/kimurayu45z/n/n563e2170a134'
 			},
 			{
@@ -44,7 +44,7 @@ const portfolios: Record<Locale, Portfolio> = {
 				id: 'crypto-asset-rescue',
 				title: 'White-hat hacking',
 				summary:
-					'Helped rescue crypto assets worth about JPY 500 million at the time, building and operating the recovery tools.',
+					'Rescued crypto assets worth about JPY 500 million at the time, developing and operating the recovery system.',
 				href: 'https://note.com/kimurayu45z/n/n563e2170a134'
 			},
 			{
@@ -68,7 +68,7 @@ const portfolios: Record<Locale, Portfolio> = {
 			{
 				id: 'crypto-asset-rescue',
 				title: '白帽安全',
-				summary: '参与救出当时估值约5亿日元的加密资产，负责回收系统的开发与运维。',
+				summary: '救出当时估值约5亿日元的加密资产，并开发和运行回收系统。',
 				href: 'https://note.com/kimurayu45z/n/n563e2170a134'
 			},
 			{
